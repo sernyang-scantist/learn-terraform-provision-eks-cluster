@@ -1,4 +1,5 @@
 module "eks" {
+  # roughly latest stable versions
   source          = "terraform-aws-modules/eks/aws"
   version         = "17.24.0"
   cluster_name    = local.cluster_name
@@ -11,8 +12,11 @@ module "eks" {
     root_volume_type = "gp2"
   }
 
+  # accepted in v17.24.0 but not in latest, moved to self-managed node groups?
+  # https://aws.amazon.com/ec2/instance-types/
   worker_groups = [
     {
+      # asg - auto scaling group
       name                          = "worker-group-1"
       instance_type                 = "t2.small"
       additional_userdata           = "echo foo bar"
@@ -29,6 +33,7 @@ module "eks" {
   ]
 }
 
+# module.eks.cluster_id is an output of the eks module
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
