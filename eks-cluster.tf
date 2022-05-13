@@ -6,6 +6,7 @@ module "eks" {
   cluster_version = "1.20"
   subnets         = module.vpc.private_subnets
 
+  # https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html
   vpc_id = module.vpc.vpc_id
 
   workers_group_defaults = {
@@ -14,9 +15,11 @@ module "eks" {
 
   # accepted in v17.24.0 but not in latest, moved to self-managed node groups?
   # https://aws.amazon.com/ec2/instance-types/
+  # https://docs.aws.amazon.com/eks/latest/userguide/worker.html
   worker_groups = [
     {
       # asg - auto scaling group
+      # https://docs.aws.amazon.com/autoscaling/ec2/userguide/auto-scaling-groups.html
       name                          = "worker-group-1"
       instance_type                 = "t2.small"
       additional_userdata           = "echo foo bar"
@@ -34,6 +37,7 @@ module "eks" {
 }
 
 # module.eks.cluster_id is an output of the eks module
+# https://acloudguru.com/blog/engineering/how-to-use-terraform-inputs-and-outputs
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
